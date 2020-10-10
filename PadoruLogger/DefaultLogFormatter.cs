@@ -20,6 +20,9 @@ namespace Padoru.Diagnostics
             sb.Clear();
 
             sb.Append(@"<b>");
+            sb.Append(" [");
+            sb.Append(logData.dateTime);
+            sb.Append("]");
             sb.Append("[");
             sb.Append(logData.contextClass);
             sb.Append(".");
@@ -28,6 +31,9 @@ namespace Padoru.Diagnostics
             sb.Append(@"</b>");
             sb.Append(" [");
             sb.Append(logData.logType);
+            sb.Append("]");
+            sb.Append(" [");
+            sb.Append(logData.channel);
             sb.Append("]");
 
             if (!string.IsNullOrWhiteSpace(logData.message.ToString()))

@@ -25,12 +25,11 @@ namespace Padoru.Diagnostics
                 if (i == 0) continue;
 
                 StackFrame frame = stacktrace.GetFrame(i);
+                sb.Append($"at {frame.GetMethod().ToString().Split(' ')[1]}");
                 string filename = frame.GetFileName();
 
                 if (!string.IsNullOrWhiteSpace(filename))
                 {
-                    sb.Append($"at {frame.GetMethod().ToString().Split(' ')[1]}");
-
                     string[] pathElements = filename.Split('\\');
 
                     int assetDirPosition = 0;
@@ -66,13 +65,14 @@ namespace Padoru.Diagnostics
 
                     sb.Append($" (in: {shortPath.ToString()}:{frame.GetFileLineNumber()})");
 
-                    sb.Append(Environment.NewLine);
                 }
                 else
                 {
                     // Cannot get filename because it is probably inside an assembly
-                    //sb.Append(" (N/A)");
+                    sb.Append(" (N/A)");
                 }
+
+                sb.Append(Environment.NewLine);
             }
             return sb.ToString();
         }
