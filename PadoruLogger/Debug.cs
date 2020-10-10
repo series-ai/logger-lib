@@ -17,7 +17,7 @@ namespace Padoru.Diagnostics
 
         private static StackTraceFormatter stackTraceFormatter = null;
         private static LogFormatter logFormatter = null;
-        private static LogSettings logSettings = null;
+        private static LogSettings settings = null;
         private static bool isConfigured = false;
 
         public static event Action<string> onLog;
@@ -42,10 +42,6 @@ namespace Padoru.Diagnostics
                 return GetStackFrame().GetMethod().Name;
             }
         }
-
-        public static LogSettings Settings { get => logSettings; set => logSettings = value; }
-        public static StackTraceFormatter StackTraceFormatter { get => stackTraceFormatter; set => stackTraceFormatter = value; }
-        public static LogFormatter LogFormatter { get => logFormatter; set => logFormatter = value; }
                
         #region Public Interface
         /// <summary>
@@ -87,19 +83,19 @@ namespace Padoru.Diagnostics
         {
             try
             {
-                Settings = settings;
+                Debug.settings = settings;
                 if (settings == null)
                 {
                     throw new Exception("Settings cannot be null");
                 }
 
-                StackTraceFormatter = stackTraceFormatter;
+                Debug.stackTraceFormatter = stackTraceFormatter;
                 if (stackTraceFormatter == null)
                 {
                     throw new Exception("StackTrace formatter cannot be null");
                 }
 
-                LogFormatter = logFormatter;
+                Debug.logFormatter = logFormatter;
                 if (logFormatter == null)
                 {
                     throw new Exception("Log formatter formatter cannot be null");
@@ -144,9 +140,9 @@ namespace Padoru.Diagnostics
                 throw new Exception("Trying to use PadoruEngine.Diagnostics.Debug, but it failed. Call Configure() before using this logger.");
             }
 
-            if (logType < Settings.LogType) return;
+            if (logType < settings.LogType) return;
 
-            bool printStacktrace = (logType >= Settings.StacktraceLogType);
+            bool printStacktrace = (logType >= settings.StacktraceLogType);
 
             var logData = GetLogData(message, logType, printStacktrace, channel);
 
@@ -179,7 +175,7 @@ namespace Padoru.Diagnostics
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(LogFormatter.GetFormattedLog(logData));
+            sb.Append(logFormatter.GetFormattedLog(logData));
             sb.Append(Environment.NewLine);
 
             if (logData.stackTrace != null)
