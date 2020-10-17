@@ -18,11 +18,8 @@ namespace Padoru.Diagnostics
         private static StackTraceFormatter stackTraceFormatter = null;
         private static LogFormatter logFormatter = null;
         private static LogSettings settings = null;
+        private static List<IDebugOutput> outputs;
         private static bool isConfigured = false;
-
-        public static event Action<string> onLog;
-        public static event Action<string> onLogWarning;
-        public static event Action<string> onLogError;
 
         // Used for stackframe caching
         private static int currentFrame = 0;
@@ -101,6 +98,8 @@ namespace Padoru.Diagnostics
                     throw new Exception("Log formatter formatter cannot be null");
                 }
 
+                outputs = new List<IDebugOutput>();
+
                 isConfigured = true;
             }
             catch (Exception e)
@@ -110,6 +109,16 @@ namespace Padoru.Diagnostics
             }
         }
 
+        public static void AddOutput(IDebugOutput output)
+        {
+            if(output == null)
+            {
+                throw new Exception("The given debug output is null");
+            }
+
+            outputs.Add(output);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -117,23 +126,23 @@ namespace Padoru.Diagnostics
         /// <param name="indent">Kept for backward compatibility</param>
         public static void Log(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Info, message, channel, onLog);
+            InternalLog(LogType.Info, message, channel);
 
         }
         public static void LogWarning(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Warning, message, channel, onLogWarning);
+            InternalLog(LogType.Warning, message, channel);
         }
 
         public static void LogError(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Error, message, channel, onLogError);
+            InternalLog(LogType.Error, message, channel);
         }
         #endregion Public Interface
 
         #region Private Methods
 
-        private static void InternalLog(LogType logType, object message, string channel, Action<string> callback)
+        private static void InternalLog(LogType logType, object message, string channel)
         {
             if (!isConfigured)
             {
@@ -148,7 +157,11 @@ namespace Padoru.Diagnostics
 
             var formattedLog = GetFromattedLogMessage(logData);
 
-            callback?.Invoke(formattedLog);
+            // Call outputs
+            foreach (var output in outputs)
+            {
+                output.WriteToOuput(logType, formattedLog, channel);
+            }
 
             currentFrame++;
         }
@@ -219,39 +232,7 @@ namespace Padoru.Diagnostics
             }
         }
         #endregion Stacktrace
-
-        #region File Writing
-        private static void WriteToStorage(object message, string path)
-        {
-            if (isConfigured)
-            {
-                try
-                {
-                    /*
-                    if (sw == null)
-                    {
-                        sw = new StreamWriter(path: Settings.LogAbsolutePath, append: true);
-                        bool saved = Settings.LogToExternalLogger;
-                        Settings.LogToExternalLogger = false;
-                        Log("--------------Log file opened--------------");
-                        Settings.LogToExternalLogger = saved;
-                    }
-                    sw.WriteLine(message);
-                    */
-                    //File.AppendAllText(Settings.LogAbsolutePath, $"{message.ToString()}{'\n'}");
-                }
-                catch (Exception e)
-                {
-                    throw new Exception($"Could not write to log file: {e.Message}");
-                }
-            }
-            else
-            {
-                throw new Exception("Logger must be configured before trying to log. Call Debug.Configure method!");
-            }
-        }
-        #endregion File Writing
-
+        
         #endregion Private Methods
     }
 }
