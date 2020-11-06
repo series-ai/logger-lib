@@ -124,17 +124,17 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, null);
         }
 
-        public static void Log(object message = null, string channel = DEFAULT_CHANNEL_NAME)
+        public static void Log(object message, string channel)
         {
             InternalLog(LogType.Info, message, channel, null);
         }
 
-        public static void Log(object message = null, object context = null)
+        public static void Log(object message, object context)
         {
             InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, context);
         }
 
-        public static void Log(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        public static void Log(object message, string channel, object context)
         {
             InternalLog(LogType.Info, message, channel, context);
         }
@@ -145,17 +145,17 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, null);
         }
 
-        public static void LogWarning(object message = null, string channel = DEFAULT_CHANNEL_NAME)
+        public static void LogWarning(object message, string channel)
         {
             InternalLog(LogType.Warning, message, channel, null);
         }
 
-        public static void LogWarning(object message = null, object context = null)
+        public static void LogWarning(object message, object context)
         {
             InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, context);
         }
 
-        public static void LogWarning(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        public static void LogWarning(object message, string channel, object context)
         {
             InternalLog(LogType.Warning, message, channel, context);
         }
@@ -165,17 +165,17 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, null);
         }
 
-        public static void LogError(object message = null, string channel = DEFAULT_CHANNEL_NAME)
+        public static void LogError(object message, string channel)
         {
             InternalLog(LogType.Error, message, channel, null);
         }
 
-        public static void LogError(object message = null, object context = null)
+        public static void LogError(object message, object context)
         {
             InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, context);
         }
 
-        public static void LogError(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        public static void LogError(object message, string channel, object context)
         {
             InternalLog(LogType.Error, message, channel, context);
         }
@@ -183,6 +183,21 @@ namespace Padoru.Diagnostics
         public static void LogException(Exception e)
         {
             InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, null, e.StackTrace);
+        }
+
+        public static void LogException(Exception e, string channel)
+        {
+            InternalLog(LogType.Exception, e.Message, channel, null, e.StackTrace);
+        }
+
+        public static void LogException(Exception e, object context)
+        {
+            InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
+        }
+
+        public static void LogException(Exception e, string channel, object context)
+        {
+            InternalLog(LogType.Exception, e.Message, channel, context, e.StackTrace);
         }
         #endregion Public Interface
 
