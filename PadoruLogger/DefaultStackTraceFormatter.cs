@@ -19,7 +19,6 @@ namespace Padoru.Diagnostics
         public override string GetFormattedStackTrace(StackTrace stacktrace)
         {
             sb.Clear();
-            sb.Append("[Stacktrace]\n");
             for (int i = 0; i < stacktrace.FrameCount; i++)
             {
                 if (i == 0) continue;
