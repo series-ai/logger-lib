@@ -10,7 +10,6 @@ namespace Padoru.Diagnostics
     public static class Debug
     {
         private const string DEFAULT_CHANNEL_NAME = "Default";
-        private const string EXCEPTION_CHANNEL_NAME = "Exception";
 
         private static StackTrace currentStackTrace;
         private static StackFrame[] stackFrames;
@@ -25,8 +24,6 @@ namespace Padoru.Diagnostics
         // Used for stackframe caching
         private static int currentFrame = 0;
         private static int cachedFrame = -1;
-
-        // TODO: Log de excepciones
 
         private static string ClassName
         {
@@ -185,7 +182,7 @@ namespace Padoru.Diagnostics
 
         public static void LogException(Exception e)
         {
-            InternalLog(LogType.Error, e.Message, EXCEPTION_CHANNEL_NAME, null);
+            InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, null, e.StackTrace);
         }
         #endregion Public Interface
 
@@ -205,6 +202,30 @@ namespace Padoru.Diagnostics
             var logData = GetLogData(message, logType, printStacktrace, channel, context);
 
             var formattedLog = GetFromattedLogMessage(logData);
+
+            // Call outputs
+            foreach (var output in outputs)
+            {
+                output.WriteToOuput(logType, formattedLog, channel, context);
+            }
+
+            currentFrame++;
+        }
+
+        private static void InternalLog(LogType logType, object message, string channel, object context, string stackTrace)
+        {
+            if (!isConfigured)
+            {
+                throw new Exception("Trying to use PadoruEngine.Diagnostics.Debug, but it failed. Call Configure() before using this logger.");
+            }
+
+            if (logType < settings.LogType) return;
+
+            bool printStacktrace = (logType >= settings.StacktraceLogType);
+
+            var logData = GetLogData(message, logType, printStacktrace, channel, context);
+
+            var formattedLog = GetFromattedLogMessage(logData, stackTrace);
 
             // Call outputs
             foreach (var output in outputs)
@@ -244,7 +265,28 @@ namespace Padoru.Diagnostics
             if (logData.stackTrace != null)
             {
                 sb.Append(Environment.NewLine);
+                sb.Append("[Stacktrace]");
+                sb.Append(Environment.NewLine);
                 sb.Append(stackTraceFormatter.GetFormattedStackTrace(logData.stackTrace));
+            }
+
+            return sb.ToString();
+        }
+
+        private static string GetFromattedLogMessage(LogData logData, string customStackTrace)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(logFormatter.GetFormattedLog(logData));
+            sb.Append(Environment.NewLine);
+
+            if (logData.stackTrace != null)
+            {
+                sb.Append(Environment.NewLine);
+                sb.Append("[Stacktrace]");
+                sb.Append(Environment.NewLine);
+                sb.Append(customStackTrace);
+                sb.Append(Environment.NewLine);
             }
 
             return sb.ToString();
