@@ -25,6 +25,9 @@ namespace Padoru.Diagnostics
         private static int currentFrame = 0;
         private static int cachedFrame = -1;
 
+        // TODO: Log de excepciones
+        // TODO: Branch de unity
+
         private static string ClassName
         {
             get
@@ -119,30 +122,71 @@ namespace Padoru.Diagnostics
             outputs.Add(output);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="indent">Kept for backward compatibility</param>
+        public static void Log(object message = null)
+        {
+            InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, null);
+        }
+
         public static void Log(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Info, message, channel);
-
+            InternalLog(LogType.Info, message, channel, null);
         }
+
+        public static void Log(object message = null, object context = null)
+        {
+            InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, context);
+        }
+
+        public static void Log(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        {
+            InternalLog(LogType.Info, message, channel, context);
+        }
+
+
+        public static void LogWarning(object message = null)
+        {
+            InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, null);
+        }
+
         public static void LogWarning(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Warning, message, channel);
+            InternalLog(LogType.Warning, message, channel, null);
+        }
+
+        public static void LogWarning(object message = null, object context = null)
+        {
+            InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, context);
+        }
+
+        public static void LogWarning(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        {
+            InternalLog(LogType.Warning, message, channel, context);
+        }
+
+        public static void LogError(object message = null)
+        {
+            InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, null);
         }
 
         public static void LogError(object message = null, string channel = DEFAULT_CHANNEL_NAME)
         {
-            InternalLog(LogType.Error, message, channel);
+            InternalLog(LogType.Error, message, channel, null);
+        }
+
+        public static void LogError(object message = null, object context = null)
+        {
+            InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, context);
+        }
+
+        public static void LogError(object message = null, string channel = DEFAULT_CHANNEL_NAME, object context = null)
+        {
+            InternalLog(LogType.Error, message, channel, context);
         }
         #endregion Public Interface
 
         #region Private Methods
 
-        private static void InternalLog(LogType logType, object message, string channel)
+        private static void InternalLog(LogType logType, object message, string channel, object context)
         {
             if (!isConfigured)
             {
@@ -153,20 +197,20 @@ namespace Padoru.Diagnostics
 
             bool printStacktrace = (logType >= settings.StacktraceLogType);
 
-            var logData = GetLogData(message, logType, printStacktrace, channel);
+            var logData = GetLogData(message, logType, printStacktrace, channel, context);
 
             var formattedLog = GetFromattedLogMessage(logData);
 
             // Call outputs
             foreach (var output in outputs)
             {
-                output.WriteToOuput(logType, formattedLog, channel);
+                output.WriteToOuput(logType, formattedLog, channel, context);
             }
 
             currentFrame++;
         }
 
-        private static LogData GetLogData(object message, LogType logType, bool printStacktrace, string channel)
+        private static LogData GetLogData(object message, LogType logType, bool printStacktrace, string channel, object context)
         {
             CacheStackTrace();
 
@@ -179,6 +223,7 @@ namespace Padoru.Diagnostics
                 contextClass = ClassName,
                 contextMethod = MethodName,
                 stackTrace = printStacktrace ? currentStackTrace : null,
+                context = context,
             };
 
             return logData;

@@ -14,5 +14,6 @@ namespace Padoru.Diagnostics
         public string contextMethod;
         public DateTime dateTime;
         public LogType logType;
+        public object context;
     }
 }
