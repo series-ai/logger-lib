@@ -10,7 +10,6 @@ namespace Padoru.Diagnostics
     public static class Debug
     {
         private const string DEFAULT_CHANNEL_NAME = "Default";
-        private const string EXCEPTION_CHANNEL_NAME = "Exception";
 
         private static StackTrace currentStackTrace;
         private static StackFrame[] stackFrames;
@@ -25,8 +24,6 @@ namespace Padoru.Diagnostics
         // Used for stackframe caching
         private static int currentFrame = 0;
         private static int cachedFrame = -1;
-
-        // TODO: Log de excepciones
 
         private static string ClassName
         {
@@ -185,7 +182,7 @@ namespace Padoru.Diagnostics
 
         public static void LogException(Exception e)
         {
-            InternalLog(LogType.Error, e.Message, EXCEPTION_CHANNEL_NAME, null, e.StackTrace);
+            InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, null, e.StackTrace);
         }
         #endregion Public Interface
 
@@ -271,7 +268,6 @@ namespace Padoru.Diagnostics
                 sb.Append("[Stacktrace]");
                 sb.Append(Environment.NewLine);
                 sb.Append(stackTraceFormatter.GetFormattedStackTrace(logData.stackTrace));
-                sb.Append(Environment.NewLine);
             }
 
             return sb.ToString();
