@@ -19,7 +19,7 @@ namespace Padoru.Diagnostics
 				{
 					UnityEngine.Debug.LogWarning(message);
 				}
-				else if (logType == LogType.Error)
+				else if (logType == LogType.Error || logType == LogType.Exception)
 				{
 					UnityEngine.Debug.LogError(message);
 				}
@@ -34,7 +34,7 @@ namespace Padoru.Diagnostics
 				{
 					UnityEngine.Debug.LogWarning(message, unityContext);
 				}
-				else if (logType == LogType.Error)
+				else if (logType == LogType.Error || logType == LogType.Exception)
 				{
 					UnityEngine.Debug.LogError(message, unityContext);
 				}
