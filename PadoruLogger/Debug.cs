@@ -315,10 +315,10 @@ namespace Padoru.Diagnostics
                 StacktraceLogType = LogType.Info,
             };
 
-            var defaultLogFormatter = new DefaultLogFormatter();
-            var defaultStackTraceFormatter = new DefaultStackTraceFormatter();
+            var defaultLogFormatter = new UnityDefaultLogFormatter();
+            var defaultStackTraceFormatter = new UnityDefaultStackTraceFormatter();
 
-            var defaultOutput = new CSharpConsoleOutput();
+            var defaultOutput = new UnityConsoleOutput();
 
             Configure(defaultLogSettings, defaultLogFormatter, defaultStackTraceFormatter);
 
