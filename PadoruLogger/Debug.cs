@@ -207,7 +207,7 @@ namespace Padoru.Diagnostics
         {
             if (!isConfigured)
             {
-                throw new Exception("Trying to use PadoruEngine.Diagnostics.Debug, but it failed. Call Configure() before using this logger.");
+                AutoCongifure();
             }
 
             if (logType < settings.LogType) return;
@@ -231,7 +231,7 @@ namespace Padoru.Diagnostics
         {
             if (!isConfigured)
             {
-                throw new Exception("Trying to use PadoruEngine.Diagnostics.Debug, but it failed. Call Configure() before using this logger.");
+                AutoCongifure();
             }
 
             if (logType < settings.LogType) return;
@@ -305,6 +305,26 @@ namespace Padoru.Diagnostics
             }
 
             return sb.ToString();
+        }
+
+        private static void AutoCongifure()
+        {
+            var defaultLogSettings = new LogSettings()
+            {
+                LogType = LogType.Info,
+                StacktraceLogType = LogType.Info,
+            };
+
+            var defaultLogFormatter = new DefaultLogFormatter();
+            var defaultStackTraceFormatter = new DefaultStackTraceFormatter();
+
+            var defaultOutput = new CSharpConsoleOutput();
+
+            Configure(defaultLogSettings, defaultLogFormatter, defaultStackTraceFormatter);
+
+            AddOutput(defaultOutput);
+
+            Debug.LogWarning($"Tried to use PadoruEngine.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
         }
 
         #region StackTrace
