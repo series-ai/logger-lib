@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Padoru.Diagnostics
 {
-	public class UnityDefaultConsoleDebugOutput : IDebugOutput
+	public class UnityConsoleOutput : IDebugOutput
 	{
 		public void WriteToOuput(LogType logType, object message, string channel, object context)
 		{
