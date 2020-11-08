@@ -315,9 +315,14 @@ namespace Padoru.Diagnostics
                 StacktraceLogType = LogType.Info,
             };
 
-            Configure(defaultLogSettings, new UnityDefaultLogFormatter(), new UnityDefaultStackTraceFormatter());
+            var defaultLogFormatter = new DefaultLogFormatter();
+            var defaultStackTraceFormatter = new DefaultStackTraceFormatter();
 
-            AddOutput(new UnityDefaultConsoleDebugOutput());
+            var defaultOutput = new CSharpConsoleOutput();
+
+            Configure(defaultLogSettings, defaultLogFormatter, defaultStackTraceFormatter);
+
+            AddOutput(defaultOutput);
 
             Debug.LogWarning($"Tried to use PadoruEngine.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
         }
