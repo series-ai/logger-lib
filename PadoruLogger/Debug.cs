@@ -324,7 +324,7 @@ namespace Padoru.Diagnostics
 
             AddOutput(defaultOutput);
 
-            Debug.LogWarning($"Tried to use PadoruEngine.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
+            Debug.LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
         }
 
         #region StackTrace
