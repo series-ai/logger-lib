@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Padoru.Diagnostics
 {
@@ -9,9 +10,15 @@ namespace Padoru.Diagnostics
     {
         private const string DEFAULT_CHANNEL_NAME = "Default";
 
+        private static readonly List<UnityEngine.RuntimePlatform> unsupportedPlatforms = new List<UnityEngine.RuntimePlatform>()
+        {
+            UnityEngine.RuntimePlatform.WebGLPlayer,
+        };
+
         private static StackTrace currentStackTrace;
         private static StackFrame[] stackFrames;
         private static int frameCount;
+        private static UnityConsoleOutput defaultUnityConsoleOutput;
 
         private static IStackTraceFormatter stackTraceFormatter = null;
         private static ILogFormatter logFormatter = null;
@@ -201,8 +208,15 @@ namespace Padoru.Diagnostics
 
         #region Private Methods
 
-        private static void InternalLog(LogType logType, object message, string channel, object context)
+        private static void InternalLog(LogType logType, object message, string channel, object context, string stackTrace = null)
         {
+            if (!IsPlatformSupported())
+            {
+
+                FallbackLog(logType, message, channel, context);
+                return;
+            }
+
             if (!isConfigured)
             {
                 AutoCongifure();
@@ -214,7 +228,7 @@ namespace Padoru.Diagnostics
 
             var logData = GetLogData(message, logType, printStacktrace, channel, context);
 
-            var formattedLog = GetFromattedLogMessage(logData);
+            var formattedLog = GetFormattedLogMessage(logData, stackTrace);
 
             // Call outputs
             foreach (var output in outputs)
@@ -225,28 +239,29 @@ namespace Padoru.Diagnostics
             currentFrame++;
         }
 
-        private static void InternalLog(LogType logType, object message, string channel, object context, string stackTrace)
+        private static void FallbackLog(LogType logType, object message, string channel, object context)
         {
-            if (!isConfigured)
+            if (defaultUnityConsoleOutput == null)
             {
-                AutoCongifure();
+                defaultUnityConsoleOutput = new UnityConsoleOutput();
             }
 
-            if (logType < settings.LogType) return;
+            var finalMessage = channel != null ? $"[{channel}] {message}" : message;
 
-            bool printStacktrace = (logType >= settings.StacktraceLogType);
+            defaultUnityConsoleOutput.WriteToOuput(logType, finalMessage, channel, context);
+        }
 
-            var logData = GetLogData(message, logType, printStacktrace, channel, context);
-
-            var formattedLog = GetFromattedLogMessage(logData, stackTrace);
-
-            // Call outputs
-            foreach (var output in outputs)
+        private static bool IsPlatformSupported()
+        {
+            foreach (var platform in unsupportedPlatforms)
             {
-                output.WriteToOuput(logType, formattedLog, channel, context);
+                if (platform == UnityEngine.Application.platform)
+                {
+                    return false;
+                }
             }
 
-            currentFrame++;
+            return true;
         }
 
         private static LogData GetLogData(object message, LogType logType, bool printStacktrace, string channel, object context)
@@ -268,7 +283,7 @@ namespace Padoru.Diagnostics
             return logData;
         }
 
-        private static string GetFromattedLogMessage(LogData logData)
+        private static string GetFormattedLogMessage(LogData logData, string customStackTrace)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -280,26 +295,16 @@ namespace Padoru.Diagnostics
                 sb.Append(Environment.NewLine);
                 sb.Append("[Stacktrace]");
                 sb.Append(Environment.NewLine);
-                sb.Append(stackTraceFormatter.GetFormattedStackTrace(logData.stackTrace));
-            }
 
-            return sb.ToString();
-        }
-
-        private static string GetFromattedLogMessage(LogData logData, string customStackTrace)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(logFormatter.GetFormattedLog(logData));
-            sb.Append(Environment.NewLine);
-
-            if (logData.stackTrace != null)
-            {
-                sb.Append(Environment.NewLine);
-                sb.Append("[Stacktrace]");
-                sb.Append(Environment.NewLine);
-                sb.Append(customStackTrace);
-                sb.Append(Environment.NewLine);
+                if (customStackTrace != null)
+                {
+                    sb.Append(customStackTrace);
+                    sb.Append(Environment.NewLine);
+                }
+                else
+                {
+                    sb.Append(stackTraceFormatter.GetFormattedStackTrace(logData.stackTrace));
+                }
             }
 
             return sb.ToString();
