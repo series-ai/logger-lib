@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
 
 namespace Padoru.Diagnostics
@@ -15,8 +13,8 @@ namespace Padoru.Diagnostics
         private static StackFrame[] stackFrames;
         private static int frameCount;
 
-        private static StackTraceFormatter stackTraceFormatter = null;
-        private static LogFormatter logFormatter = null;
+        private static IStackTraceFormatter stackTraceFormatter = null;
+        private static ILogFormatter logFormatter = null;
         private static LogSettings settings = null;
         private static List<IDebugOutput> outputs;
         private static bool isConfigured = false;
@@ -48,7 +46,7 @@ namespace Padoru.Diagnostics
         /// <param name="resetLogFileIfExists"></param>
         public static void Configure(LogSettings settings)
         {
-            Configure(settings, new DefaultLogFormatter(), new DefaultStackTraceFormatter());
+            Configure(settings, new UnityDefaultLogFormatter(), new UnityDefaultStackTraceFormatter());
         }
 
         /// <summary>
@@ -56,9 +54,9 @@ namespace Padoru.Diagnostics
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="resetLogFileIfExists"></param>
-        public static void Configure(LogSettings settings, LogFormatter logFormatter)
+        public static void Configure(LogSettings settings, ILogFormatter logFormatter)
         {
-            Configure(settings, logFormatter, new DefaultStackTraceFormatter());
+            Configure(settings, logFormatter, new UnityDefaultStackTraceFormatter());
         }
 
         /// <summary>
@@ -66,9 +64,9 @@ namespace Padoru.Diagnostics
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="resetLogFileIfExists"></param>
-        public static void Configure(LogSettings settings, StackTraceFormatter stackTraceFormatter)
+        public static void Configure(LogSettings settings, IStackTraceFormatter stackTraceFormatter)
         {
-            Configure(settings, new DefaultLogFormatter(), stackTraceFormatter);
+            Configure(settings, new UnityDefaultLogFormatter(), stackTraceFormatter);
         }
 
         /// <summary>
@@ -76,7 +74,7 @@ namespace Padoru.Diagnostics
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="resetLogFileIfExists"></param>
-        public static void Configure(LogSettings settings, LogFormatter logFormatter, StackTraceFormatter stackTraceFormatter)
+        public static void Configure(LogSettings settings, ILogFormatter logFormatter, IStackTraceFormatter stackTraceFormatter)
         {
             try
             {

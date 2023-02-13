@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Padoru.Diagnostics
+﻿namespace Padoru.Diagnostics
 {
     public interface IDebugOutput
     {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Padoru.Diagnostics
 {
-    public class UnityDefaultStackTraceFormatter : StackTraceFormatter
+    public class UnityDefaultStackTraceFormatter : IStackTraceFormatter
     {
         private StringBuilder sb;
 
@@ -13,7 +13,7 @@ namespace Padoru.Diagnostics
             sb = new StringBuilder();
         }
 
-        public override string GetFormattedStackTrace(StackTrace stacktrace)
+        public string GetFormattedStackTrace(StackTrace stacktrace)
         {
             sb.Clear();
             for (int i = 0; i < stacktrace.FrameCount; i++)

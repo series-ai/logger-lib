@@ -2,7 +2,7 @@
 
 namespace Padoru.Diagnostics
 {
-    public class UnityDefaultLogFormatter : LogFormatter
+    public class UnityDefaultLogFormatter : ILogFormatter
     {
         private StringBuilder sb;
 
@@ -11,7 +11,7 @@ namespace Padoru.Diagnostics
             sb = new StringBuilder();
         }
 
-        public override string GetFormattedLog(LogData logData)
+        public string GetFormattedLog(LogData logData)
         {
             sb.Clear();
 
@@ -24,6 +24,9 @@ namespace Padoru.Diagnostics
             sb.Append(@"</b>");
             sb.Append(" [");
             sb.Append(logData.logType);
+            sb.Append("]");
+            sb.Append(" [");
+            sb.Append(logData.channel);
             sb.Append("]");
 
             if (!string.IsNullOrWhiteSpace(logData.message.ToString()))
