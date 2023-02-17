@@ -10,9 +10,10 @@ namespace Padoru.Diagnostics
     {
         private const string DEFAULT_CHANNEL_NAME = "Default";
 
-        private static readonly List<UnityEngine.RuntimePlatform> unsupportedPlatforms = new List<UnityEngine.RuntimePlatform>()
+        private static readonly List<RuntimePlatform> unsupportedPlatforms = new List<RuntimePlatform>()
         {
-            UnityEngine.RuntimePlatform.WebGLPlayer,
+            RuntimePlatform.WebGLPlayer,
+            RuntimePlatform.IPhonePlayer,
         };
 
         private static StackTrace currentStackTrace;
