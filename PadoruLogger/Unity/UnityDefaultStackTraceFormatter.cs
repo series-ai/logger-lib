@@ -6,7 +6,7 @@ namespace Padoru.Diagnostics
 {
     public class UnityDefaultStackTraceFormatter : IStackTraceFormatter
     {
-        private StringBuilder sb;
+        private readonly StringBuilder sb;
 
         public UnityDefaultStackTraceFormatter()
         {

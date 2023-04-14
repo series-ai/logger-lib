@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,42 +8,14 @@ namespace Padoru.Diagnostics
     public static class Debug
     {
         private const string DEFAULT_CHANNEL_NAME = "Default";
-
-        private static readonly List<RuntimePlatform> unsupportedPlatforms = new List<RuntimePlatform>()
-        {
-            RuntimePlatform.WebGLPlayer,
-            RuntimePlatform.IPhonePlayer,
-        };
-
-        private static StackTrace currentStackTrace;
-        private static StackFrame[] stackFrames;
-        private static int frameCount;
+        
         private static UnityConsoleOutput defaultUnityConsoleOutput;
-
-        private static IStackTraceFormatter stackTraceFormatter = null;
-        private static ILogFormatter logFormatter = null;
-        private static LogSettings settings = null;
+        private static List<RuntimePlatform> unsupportedPlatforms;
+        private static IStackTraceFormatter stackTraceFormatter;
+        private static ILogFormatter logFormatter;
+        private static LogSettings settings;
         private static List<IDebugOutput> outputs;
-        private static bool isConfigured = false;
-
-        // Used for stackframe caching
-        private static int currentFrame = 0;
-        private static int cachedFrame = -1;
-
-        private static string ClassName
-        {
-            get
-            {
-                return GetStackFrame().GetMethod().DeclaringType.Name;
-            }
-        }
-        private static string MethodName
-        {
-            get
-            {
-                return GetStackFrame().GetMethod().Name;
-            }
-        }
+        private static bool isConfigured;
                
         #region Public Interface
         /// <summary>
@@ -104,6 +75,8 @@ namespace Padoru.Diagnostics
                     throw new Exception("Log formatter formatter cannot be null");
                 }
 
+                unsupportedPlatforms = settings.UnsupportedPlatforms;
+                
                 outputs = new List<IDebugOutput>();
 
                 isConfigured = true;
@@ -213,19 +186,18 @@ namespace Padoru.Diagnostics
         {
             if (!IsPlatformSupported())
             {
-
                 FallbackLog(logType, message, channel, context);
                 return;
             }
 
             if (!isConfigured)
             {
-                AutoCongifure();
+                AutoConfigure();
             }
 
             if (logType < settings.LogType) return;
 
-            bool printStacktrace = (logType >= settings.StacktraceLogType);
+            var printStacktrace = (logType >= settings.StacktraceLogType);
 
             var logData = GetLogData(message, logType, printStacktrace, channel, context);
 
@@ -237,7 +209,7 @@ namespace Padoru.Diagnostics
                 output.WriteToOuput(logType, formattedLog, channel, context);
             }
 
-            currentFrame++;
+            StackTraceUtils.CurrentFrame++;
         }
 
         private static void FallbackLog(LogType logType, object message, string channel, object context)
@@ -254,9 +226,14 @@ namespace Padoru.Diagnostics
 
         private static bool IsPlatformSupported()
         {
+            if (unsupportedPlatforms == null)
+            {
+                return true;
+            }
+            
             foreach (var platform in unsupportedPlatforms)
             {
-                if (platform == UnityEngine.Application.platform)
+                if (platform == Application.platform)
                 {
                     return false;
                 }
@@ -267,7 +244,7 @@ namespace Padoru.Diagnostics
 
         private static LogData GetLogData(object message, LogType logType, bool printStacktrace, string channel, object context)
         {
-            CacheStackTrace();
+            StackTraceUtils.CacheStackTrace();
 
             var logData = new LogData()
             {
@@ -275,9 +252,9 @@ namespace Padoru.Diagnostics
                 logType = logType,
                 dateTime = DateTime.Now,
                 channel = channel,
-                contextClass = ClassName,
-                contextMethod = MethodName,
-                stackTrace = printStacktrace ? currentStackTrace : null,
+                contextClass = StackTraceUtils.ClassName,
+                contextMethod = StackTraceUtils.MethodName,
+                stackTrace = printStacktrace ? StackTraceUtils.CurrentStackTrace : null,
                 context = context,
             };
 
@@ -311,12 +288,17 @@ namespace Padoru.Diagnostics
             return sb.ToString();
         }
 
-        private static void AutoCongifure()
+        private static void AutoConfigure()
         {
             var defaultLogSettings = new LogSettings()
             {
                 LogType = LogType.Info,
                 StacktraceLogType = LogType.Info,
+                UnsupportedPlatforms = new List<RuntimePlatform>()
+                {
+                    RuntimePlatform.IPhonePlayer,
+                    RuntimePlatform.WebGLPlayer,
+                },
             };
 
             var defaultLogFormatter = new UnityDefaultLogFormatter();
@@ -328,41 +310,8 @@ namespace Padoru.Diagnostics
 
             AddOutput(defaultOutput);
 
-            Debug.LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
+            LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
         }
-
-        #region StackTrace
-        private static StackFrame GetStackFrame()
-        {
-            // Find the position of Debug.Log in the callstack 
-            // and point to the next immediate element on the stack, which is the one we are interested in
-
-            int debugCallPos = 0;
-            foreach (var f in stackFrames)
-            {
-                var clss = f.GetMethod().DeclaringType;
-                var methodName = f.GetMethod().Name;
-                if (clss == typeof(Debug) && methodName.StartsWith("Log"))
-                {
-                    break;
-                }
-                debugCallPos++;
-            }
-            return stackFrames[debugCallPos + 1];
-        }
-
-        private static void CacheStackTrace()
-        {
-            if (currentFrame != cachedFrame)
-            {
-                // Invalidate cache
-                currentStackTrace = new StackTrace(true);
-                stackFrames = currentStackTrace.GetFrames();
-                frameCount = currentStackTrace.FrameCount;
-                cachedFrame = currentFrame;
-            }
-        }
-        #endregion Stacktrace
         
         #endregion Private Methods
     }

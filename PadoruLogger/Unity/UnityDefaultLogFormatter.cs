@@ -4,7 +4,7 @@ namespace Padoru.Diagnostics
 {
     public class UnityDefaultLogFormatter : ILogFormatter
     {
-        private StringBuilder sb;
+        private readonly StringBuilder sb;
 
         public UnityDefaultLogFormatter()
         {
@@ -16,11 +16,17 @@ namespace Padoru.Diagnostics
             sb.Clear();
 
             sb.Append(@"<b>");
-            sb.Append("[");
-            sb.Append(logData.contextClass);
-            sb.Append(".");
-            sb.Append(logData.contextMethod);
-            sb.Append("]");
+            
+            // This might happen on platforms where we can't get stack traces
+            if(!string.IsNullOrWhiteSpace(logData.contextClass) && !string.IsNullOrWhiteSpace(logData.contextMethod))
+            {
+                sb.Append("[");
+                sb.Append(logData.contextClass);
+                sb.Append(".");
+                sb.Append(logData.contextMethod);
+                sb.Append("]");
+            }
+            
             sb.Append(@"</b>");
             sb.Append(" [");
             sb.Append(logData.logType);
@@ -32,7 +38,7 @@ namespace Padoru.Diagnostics
             if (!string.IsNullOrWhiteSpace(logData.message.ToString()))
             {
                 sb.Append(": ");
-                sb.Append(logData.message == null ? "NULL" : logData.message);
+                sb.Append(logData.message ?? "NULL");
             }
 
             return sb.ToString();
