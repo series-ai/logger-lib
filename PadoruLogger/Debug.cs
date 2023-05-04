@@ -235,16 +235,8 @@ namespace Padoru.Diagnostics
             {
                 return true;
             }
-            
-            foreach (var platform in unsupportedPlatforms)
-            {
-                if (platform == Application.platform)
-                {
-                    return false;
-                }
-            }
 
-            return true;
+            return !unsupportedPlatforms.Contains(Application.platform);
         }
 
         private static LogData GetLogData(object message, LogType logType, bool printStacktrace, string channel, object context)
