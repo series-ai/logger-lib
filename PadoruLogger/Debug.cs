@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 
 namespace Padoru.Diagnostics
@@ -161,22 +162,24 @@ namespace Padoru.Diagnostics
 
         public static void LogException(Exception e)
         {
-            InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, null, e.StackTrace);
+            LogException(null, e, null);
         }
 
-        public static void LogException(Exception e, string channel)
+        public static void LogException(object messageHeader, Exception e)
         {
-            InternalLog(LogType.Exception, e.Message, channel, null, e.StackTrace);
+            LogException(messageHeader, e, null);
         }
 
         public static void LogException(Exception e, object context)
         {
-            InternalLog(LogType.Exception, e.Message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
+            LogException(null, e, context);
         }
-
-        public static void LogException(Exception e, string channel, object context)
+        
+        public static void LogException(object messageHeader, Exception e, object context)
         {
-            InternalLog(LogType.Exception, e.Message, channel, context, e.StackTrace);
+            var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
+            
+            InternalLog(LogType.Exception, message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
         }
         #endregion Public Interface
 
@@ -184,6 +187,8 @@ namespace Padoru.Diagnostics
 
         private static void InternalLog(LogType logType, object message, string channel, object context, string stackTrace = null)
         {
+            message = message ?? string.Empty;
+            
             if (!IsPlatformSupported())
             {
                 FallbackLog(logType, message, channel, context);
