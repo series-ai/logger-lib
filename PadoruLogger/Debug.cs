@@ -301,8 +301,7 @@ namespace Padoru.Diagnostics
                 StacktraceLogType = LogType.Info,
                 UnsupportedPlatforms = new List<RuntimePlatform>()
                 {
-                    RuntimePlatform.IPhonePlayer,
-                    RuntimePlatform.WebGLPlayer,
+                    RuntimePlatform.IPhonePlayer
                 },
             };
 
