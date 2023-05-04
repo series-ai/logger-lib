@@ -101,17 +101,17 @@ namespace Padoru.Diagnostics
 
         public static void Log(object message = null)
         {
-            InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, null);
+            Log(message, DEFAULT_CHANNEL_NAME, null);
         }
 
         public static void Log(object message, string channel)
         {
-            InternalLog(LogType.Info, message, channel, null);
+            Log(message, channel, null);
         }
 
         public static void Log(object message, object context)
         {
-            InternalLog(LogType.Info, message, DEFAULT_CHANNEL_NAME, context);
+            Log(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void Log(object message, string channel, object context)
@@ -122,17 +122,17 @@ namespace Padoru.Diagnostics
 
         public static void LogWarning(object message = null)
         {
-            InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, null);
+            LogWarning(message, DEFAULT_CHANNEL_NAME, null);
         }
 
         public static void LogWarning(object message, string channel)
         {
-            InternalLog(LogType.Warning, message, channel, null);
+            LogWarning(message, channel, null);
         }
 
         public static void LogWarning(object message, object context)
         {
-            InternalLog(LogType.Warning, message, DEFAULT_CHANNEL_NAME, context);
+            LogWarning(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void LogWarning(object message, string channel, object context)
@@ -142,17 +142,17 @@ namespace Padoru.Diagnostics
 
         public static void LogError(object message = null)
         {
-            InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, null);
+            LogError(message, DEFAULT_CHANNEL_NAME, null);
         }
 
         public static void LogError(object message, string channel)
         {
-            InternalLog(LogType.Error, message, channel, null);
+            LogError(message, channel, null);
         }
 
         public static void LogError(object message, object context)
         {
-            InternalLog(LogType.Error, message, DEFAULT_CHANNEL_NAME, context);
+            LogError(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void LogError(object message, string channel, object context)
