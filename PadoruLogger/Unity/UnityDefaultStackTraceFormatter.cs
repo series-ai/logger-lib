@@ -18,7 +18,10 @@ namespace Padoru.Diagnostics
             sb.Clear();
             for (int i = 0; i < stacktrace.FrameCount; i++)
             {
-                if (i == 0) continue;
+                if (i == 0)
+                {
+                    continue;
+                }
 
                 StackFrame frame = stacktrace.GetFrame(i);
                 string filename = frame.GetFileName();
