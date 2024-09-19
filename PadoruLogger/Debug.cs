@@ -8,8 +8,6 @@ namespace Padoru.Diagnostics
 {
     public static class Debug
     {
-        private const string DEFAULT_CHANNEL_NAME = "Default";
-        
         private static UnityConsoleOutput defaultUnityConsoleOutput;
         private static List<RuntimePlatform> unsupportedPlatforms;
         private static IStackTraceFormatter stackTraceFormatter;
@@ -99,87 +97,26 @@ namespace Padoru.Diagnostics
             outputs.Add(output);
         }
 
-        public static void Log(object message = null)
-        {
-            Log(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
-        public static void Log(object message, string channel)
-        {
-            Log(message, channel, null);
-        }
-
-        public static void Log(object message, object context)
-        {
-            Log(message, DEFAULT_CHANNEL_NAME, context);
-        }
-
-        public static void Log(object message, string channel, object context)
+        public static void Log(object message, string channel, object context=null)
         {
             InternalLog(LogType.Info, message, channel, context);
         }
 
-
-        public static void LogWarning(object message = null)
-        {
-            LogWarning(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
-        public static void LogWarning(object message, string channel)
-        {
-            LogWarning(message, channel, null);
-        }
-
-        public static void LogWarning(object message, object context)
-        {
-            LogWarning(message, DEFAULT_CHANNEL_NAME, context);
-        }
-
-        public static void LogWarning(object message, string channel, object context)
+        public static void LogWarning(object message, string channel, object context=null)
         {
             InternalLog(LogType.Warning, message, channel, context);
         }
 
-        public static void LogError(object message = null)
-        {
-            LogError(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
-        public static void LogError(object message, string channel)
-        {
-            LogError(message, channel, null);
-        }
-
-        public static void LogError(object message, object context)
-        {
-            LogError(message, DEFAULT_CHANNEL_NAME, context);
-        }
-
-        public static void LogError(object message, string channel, object context)
+        public static void LogError(object message, string channel, object context=null)
         {
             InternalLog(LogType.Error, message, channel, context);
         }
 
-        public static void LogException(Exception e)
-        {
-            LogException(null, e, null);
-        }
-
-        public static void LogException(object messageHeader, Exception e)
-        {
-            LogException(messageHeader, e, null);
-        }
-
-        public static void LogException(Exception e, object context)
-        {
-            LogException(null, e, context);
-        }
-        
-        public static void LogException(object messageHeader, Exception e, object context)
+        public static void LogException(object messageHeader, Exception e, string channel, object context=null)
         {
             var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
             
-            InternalLog(LogType.Exception, message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
+            InternalLog(LogType.Exception, message, channel, context, e.StackTrace);
         }
         #endregion Public Interface
 
@@ -306,7 +243,7 @@ namespace Padoru.Diagnostics
 
             AddOutput(defaultOutput);
 
-            LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.");
+            LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.", "LogInternal");
         }
         
         #endregion Private Methods
