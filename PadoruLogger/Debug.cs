@@ -112,7 +112,23 @@ namespace Padoru.Diagnostics
         {
             InternalLog(LogType.Error, message, channel, context);
         }
+        
+        
+        public static void LogException(Exception e, string channel)
+        {
+            LogException(null, e, channel);
+        }
 
+        public static void LogException(object messageHeader, string channel, Exception e)
+        {
+            LogException(messageHeader, e, channel);
+        }
+
+        public static void LogException(Exception e, string channel, object context)
+        {
+            LogException(null, e, channel, context);
+        }
+        
         public static void LogException(object messageHeader, Exception e, string channel, object context=null)
         {
             var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
