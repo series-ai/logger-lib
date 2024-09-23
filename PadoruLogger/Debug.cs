@@ -8,6 +8,7 @@ namespace Padoru.Diagnostics
 {
     public static class Debug
     {
+        private const string INTERNAL_CHANNEL_NAME = "PadoruDebug";
         private static UnityConsoleOutput defaultUnityConsoleOutput;
         private static List<RuntimePlatform> unsupportedPlatforms;
         private static IStackTraceFormatter stackTraceFormatter;
@@ -243,7 +244,7 @@ namespace Padoru.Diagnostics
 
             AddOutput(defaultOutput);
 
-            LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.", "LogInternal");
+            LogWarning($"Tried to use Padoru.Diagnostics.Debug without configuring it first. Logger auto-configured itself with default options.", INTERNAL_CHANNEL_NAME);
         }
         
         #endregion Private Methods
