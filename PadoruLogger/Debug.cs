@@ -8,7 +8,7 @@ namespace Padoru.Diagnostics
 {
     public static class Debug
     {
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
+        [Obsolete("Default channel is deprecated.")]
         private const string DEFAULT_CHANNEL_NAME = "Default";
         private const string INTERNAL_CHANNEL_NAME = "PadoruDebug";
 
