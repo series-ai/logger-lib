@@ -113,7 +113,6 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Error, message, channel, context);
         }
         
-        
         public static void LogException(Exception e, string channel)
         {
             LogException(null, e, channel);
