@@ -180,7 +180,7 @@ namespace Padoru.Diagnostics
         {
             var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
             
-            InternalLog(LogType.Exception, message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
+            InternalLog(LogType.Exception, message, channel, context, e.StackTrace);
         }
         
         public static void LogException(Exception e)
