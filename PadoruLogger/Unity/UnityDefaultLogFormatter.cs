@@ -1,13 +1,16 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Padoru.Diagnostics
 {
     public class UnityDefaultLogFormatter : ILogFormatter
     {
+        private readonly bool displayTimestamp;
         private readonly StringBuilder sb;
 
-        public UnityDefaultLogFormatter()
+        public UnityDefaultLogFormatter(bool displayTimestamp)
         {
+            this.displayTimestamp = displayTimestamp;
             sb = new StringBuilder();
         }
 
@@ -16,6 +19,13 @@ namespace Padoru.Diagnostics
             sb.Clear();
 
             sb.Append(@"<b>");
+
+            if (displayTimestamp)
+            {
+                sb.Append("[");
+                sb.Append(DateTime.Now.ToString("HH:mm:ss"));
+                sb.Append("]");
+            }
             
             // This might happen on platforms where we can't get stack traces
             if(!string.IsNullOrWhiteSpace(logData.contextClass) && !string.IsNullOrWhiteSpace(logData.contextMethod))
