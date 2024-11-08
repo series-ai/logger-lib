@@ -8,6 +8,7 @@ namespace Padoru.Diagnostics
     {
         public LogType StacktraceLogType = LogType.Error;
         public LogType LogType = LogType.Error;
+        public bool DisplayTimestamp;
         public List<RuntimePlatform> UnsupportedPlatforms;
     }
 }

@@ -24,17 +24,15 @@ namespace Padoru.Diagnostics
         /// Mandatory method to start using the logger
         /// </summary>
         /// <param name="settings"></param>
-        /// <param name="resetLogFileIfExists"></param>
         public static void Configure(LogSettings settings)
         {
-            Configure(settings, new UnityDefaultLogFormatter(), new UnityDefaultStackTraceFormatter());
+            Configure(settings, new UnityDefaultLogFormatter(settings.DisplayTimestamp), new UnityDefaultStackTraceFormatter());
         }
 
         /// <summary>
         /// Mandatory method to start using the logger
         /// </summary>
         /// <param name="settings"></param>
-        /// <param name="resetLogFileIfExists"></param>
         public static void Configure(LogSettings settings, ILogFormatter logFormatter)
         {
             Configure(settings, logFormatter, new UnityDefaultStackTraceFormatter());
@@ -44,17 +42,15 @@ namespace Padoru.Diagnostics
         /// Mandatory method to start using the logger
         /// </summary>
         /// <param name="settings"></param>
-        /// <param name="resetLogFileIfExists"></param>
         public static void Configure(LogSettings settings, IStackTraceFormatter stackTraceFormatter)
         {
-            Configure(settings, new UnityDefaultLogFormatter(), stackTraceFormatter);
+            Configure(settings, new UnityDefaultLogFormatter(settings.DisplayTimestamp), stackTraceFormatter);
         }
 
         /// <summary>
         /// Mandatory method to start using the logger
         /// </summary>
         /// <param name="settings"></param>
-        /// <param name="resetLogFileIfExists"></param>
         public static void Configure(LogSettings settings, ILogFormatter logFormatter, IStackTraceFormatter stackTraceFormatter)
         {
             try
@@ -324,13 +320,14 @@ namespace Padoru.Diagnostics
             {
                 LogType = LogType.Info,
                 StacktraceLogType = LogType.Info,
+                DisplayTimestamp = true,
                 UnsupportedPlatforms = new List<RuntimePlatform>()
                 {
                     RuntimePlatform.IPhonePlayer
                 },
             };
 
-            var defaultLogFormatter = new UnityDefaultLogFormatter();
+            var defaultLogFormatter = new UnityDefaultLogFormatter(defaultLogSettings.DisplayTimestamp);
             var defaultStackTraceFormatter = new UnityDefaultStackTraceFormatter();
 
             var defaultOutput = new UnityConsoleOutput();
