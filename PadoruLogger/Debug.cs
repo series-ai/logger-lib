@@ -7,6 +7,8 @@ namespace Padoru.Diagnostics
 {
     public static class Debug
     {
+        private const string INTERNAL_CHANNEL_NAME = "PadoruDebug";
+        
         private static UnityConsoleOutput defaultUnityConsoleOutput;
         private static List<RuntimePlatform> unsupportedPlatforms;
         private static IStackTraceFormatter stackTraceFormatter;
