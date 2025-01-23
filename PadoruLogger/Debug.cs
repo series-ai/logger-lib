@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using UnityEngine;
 
 namespace Padoru.Diagnostics
 {
     public static class Debug
     {
-        private const string DEFAULT_CHANNEL_NAME = "Default";  // deprecated
-        private const string INTERNAL_CHANNEL_NAME = "PadoruDebug";
-
         private static UnityConsoleOutput defaultUnityConsoleOutput;
         private static List<RuntimePlatform> unsupportedPlatforms;
         private static IStackTraceFormatter stackTraceFormatter;
@@ -96,21 +92,9 @@ namespace Padoru.Diagnostics
             outputs.Add(output);
         }
 
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void Log(object message = null)
-        {
-            Log(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
         public static void Log(object message, string channel)
         {
             Log(message, channel, null);
-        }
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void Log(object message, object context)
-        {
-            Log(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void Log(object message, string channel, object context)
@@ -118,22 +102,9 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Info, message, channel, context);
         }
 
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogWarning(object message = null)
-        {
-            LogWarning(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
         public static void LogWarning(object message, string channel)
         {
             LogWarning(message, channel, null);
-        }
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogWarning(object message, object context)
-        {
-            LogWarning(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void LogWarning(object message, string channel, object context)
@@ -141,21 +112,9 @@ namespace Padoru.Diagnostics
             InternalLog(LogType.Warning, message, channel, context);
         }
 
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogError(object message = null)
-        {
-            LogError(message, DEFAULT_CHANNEL_NAME, null);
-        }
-
         public static void LogError(object message, string channel)
         {
             LogError(message, channel, null);
-        }
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogError(object message, object context)
-        {
-            LogError(message, DEFAULT_CHANNEL_NAME, context);
         }
 
         public static void LogError(object message, string channel, object context)
@@ -183,32 +142,6 @@ namespace Padoru.Diagnostics
             var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
             
             InternalLog(LogType.Exception, message, channel, context, e.StackTrace);
-        }
-        
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogException(Exception e)
-        {
-            LogException(null, e, null);
-        }
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogException(object messageHeader, Exception e)
-        {
-            LogException(messageHeader, e, null);
-        }
-
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogException(Exception e, object context)
-        {
-            LogException(null, e, context);
-        }
-        
-        [Obsolete("Logging without channel is deprecated, please use an overload with channel instead.")]
-        public static void LogException(object messageHeader, Exception e, object context)
-        {
-            var message = messageHeader != null ? $"{messageHeader}. {e.Message}" : e.Message;
-            
-            InternalLog(LogType.Exception, message, DEFAULT_CHANNEL_NAME, context, e.StackTrace);
         }
         #endregion Public Interface
 
